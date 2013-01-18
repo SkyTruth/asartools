@@ -1,0 +1,13 @@
+# ASAR Tools Settings
+
+GEO_DB_HOST = 'ewn2.skytruth.org'
+GEO_DB_USER = 'scraper'
+GEO_DB_PASS = 'PASSWORD'
+GEO_DB_DATABASE = 'alerts'
+
+ARCHIVE_DIR = 'F:\\ASAR\\'
+
+MAX_DOWNLOAD = 2000
+MAX_PROCESS = 2000
+
+S3_CONFIG_FILE = '%ss3.cfg' % ARCHIVE_DIR
