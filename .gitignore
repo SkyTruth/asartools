@@ -10,7 +10,7 @@ dist
 build
 eggs
 parts
-bin
+# bin  # Excludes utility/script directory - kwurster 06/13/14
 var
 sdist
 develop-eggs
@@ -33,3 +33,11 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# JetBrains PyCharm
+.idea
+
+# Virtual Environment
+env
+env2
+env3
