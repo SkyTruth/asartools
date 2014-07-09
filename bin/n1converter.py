@@ -270,9 +270,11 @@ def main(args):
     gdalwarp_options = " -of VRT -tps -s_srs EPSG:4326 -t_srs EPSG:4326 %infile %outfile "
     gdal_translate_options = " -of GTiff -ot Byte -scale %detectmin %detectmax %oscalemin %oscalemax -co SPARSE_OK=True -co INTERLEAVE=BAND -co BIGTIFF=YES -co COMPRESS=DEFLATE -co PREDICTOR=2 %infile %outfile "
 
-    # gdaltranslate scale defaults
+    # gdal_translate scale defaults
     gdal_translate_default_oscalemin = '0'
     gdal_translate_default_oscalemax = '255'
+    gdal_translate_default_iscalemin = None
+    gdal_translate_default_iscalemax = None
 
     # Additional options
     print_mode = False
@@ -325,23 +327,27 @@ def main(args):
             elif arg in ('--iscale', '-iscale'):
                 i += 1
                 while i < len(args) and args[i] != '-':
-                    if '%detectmin' in gdal_translate_options:
-                        gdal_translate_options.replace('%detectmin', args[i])
-                    elif '%detectmax' in gdal_translate_options:
-                        gdal_translate_options.replace('%detectmax', args[i])
+                    if gdal_translate_default_iscalemin is None:
+                        gdal_translate_default_iscalemin = args[i]
+                    elif gdal_translate_default_iscalemax is None:
+                        gdal_translate_default_iscalemax = args[i]
                     else:
                         break  # Helps to detect bad parameters
                     i += 1
             elif arg in ('--oscale', '-oscale'):
                 i += 1
-                while i < len(args) and args[i] != '-':
-                    if '%oscalemin' in gdal_translate_options:
-                        gdal_translate_options.replace('%oscalemin', args[i])
-                    elif '%oscalemax' in gdal_translate_options:
-                        gdal_translate_options.replace('%oscalemax', args[i])
-                    else:
-                        break  # Helps to detect bad parameters
-                    i += 1
+                print("")
+                print("ERROR: --oscale is not currently functional")
+                print("")
+                return 1
+                # while i < len(args) and args[i] != '-':
+                #     if '%oscalemin' in gdal_translate_options:
+                #         gdal_translate_options.replace('%oscalemin', args[i])
+                #     elif '%oscalemax' in gdal_translate_options:
+                #         gdal_translate_options.replace('%oscalemax', args[i])
+                #     else:
+                #         break  # Helps to detect bad parameters
+                #     i += 1
 
             # Additional options
             elif arg in ('--print', '-print'):
@@ -445,13 +451,19 @@ def main(args):
         # Pull the min/max raster values out of the gdalinfo output
         min_max_line = [line.strip() for line in output.split(os.linesep) if 'Minimum=' in line and 'Maximum=' in line][0]
         iscale_min, iscale_max = min_max_line.split()[:2]
-        iscale_min = iscale_min.replace('Minimum=', '')
-        iscale_min = iscale_min.replace(',', '')
-        iscale_max = iscale_max.replace('Maximum=', '')
-        iscale_max = iscale_max.replace(',', '')
+        if gdal_translate_default_iscalemin is None:
+            iscale_min = iscale_min.replace('Minimum=', '')
+            iscale_min = iscale_min.replace(',', '')
+        else:
+            iscale_min = gdal_translate_default_iscalemin
+        if gdal_translate_default_iscalemax is None:
+            iscale_max = iscale_max.replace('Maximum=', '')
+            iscale_max = iscale_max.replace(',', '')
+        else:
+            iscale_max = gdal_translate_default_iscalemax
 
-        print("  Min = %s" % iscale_min)
-        print("  Max = %s" % iscale_max)
+        print("  Source Scale Min = %s" % iscale_min)
+        print("  Source Scale Max = %s" % iscale_max)
 
         # Make replacements
         if '%detectmin' in gdal_translate_options:
