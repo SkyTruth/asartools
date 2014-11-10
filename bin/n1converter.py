@@ -267,7 +267,7 @@ def main(args):
 
     # GDAL utility options
     gdalinfo_options = " -stats -nofl -noct -norat -nomd -nogcp -mm %infile "
-    gdalwarp_options = " -of VRT -tps -s_srs EPSG:4326 -t_srs EPSG:4326 %infile %outfile "
+    gdalwarp_options = " -of VRT -tps -t_srs EPSG:4326 %infile %outfile "
     gdal_translate_options = " -of GTiff -ot Byte -scale %detectmin %detectmax %oscalemin %oscalemax -co SPARSE_OK=True -co INTERLEAVE=BAND -co BIGTIFF=YES -co COMPRESS=DEFLATE -co PREDICTOR=2 %infile %outfile "
 
     # gdal_translate scale defaults
